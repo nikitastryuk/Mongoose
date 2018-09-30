@@ -1,0 +1,41 @@
+The permitted SchemaTypes are:
+String
+Number
+Date
+Buffer
+Boolean
+Mixed
+ObjectId
+Array
+Decimal128
+Map
+
+All Schema Types Options:
+required: boolean or function, if true adds a required validator for this property
+default: Any or function, sets a default value for the path. If the value is a function, the return value of the function is used as the default.
+select: boolean, specifies default projections for queries
+validate: function, adds a validator function for this property
+get: function, defines a custom getter for this property using Object.defineProperty().
+set: function, defines a custom setter for this property using Object.defineProperty().
+alias: string, mongoose >= 4.10.0 only. Defines a virtual with the given name that gets/sets this path.
+
+Instance methods (do not declare methods using ES6 arrow functions (=>))
+Schema.methods.findSimilarTypes = function(cb) {}
+const instance = new Instance({type: 1});
+instance.findSimilarTypes(()=>{});
+
+Statics
+Schema.statics.findByName = function(name, cb) {}
+Instance.findByName('name',()=>{});
+
+Query Helpers
+Schema.query.byName = function(name) {}
+Instance.find().byName('name');
+
+Indexes
+name: { type: [String], index: true } // field level
+Schema.index({ name: 1 }); // schema level
+
+Virtuals
+chema.virtual('fullName').get(function () {}.set(function () {}
+
