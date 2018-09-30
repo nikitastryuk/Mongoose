@@ -23,7 +23,6 @@ const usersCount = 10,
     await createPosts();
 })();
 
-
 // Helpers
 const dropCollections = async () => {
     const collections = await mongoose.connection.db.collections();
