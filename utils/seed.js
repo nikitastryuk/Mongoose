@@ -10,7 +10,7 @@ const faker = require('faker'),
 const usersCount = 10,
     postsCount = 5,
     likesCount = 5,
-    commentsCount = 5,
+    commentsCount = 3,
     users = [],
     posts = [],
     comments = [];
@@ -21,6 +21,8 @@ const usersCount = 10,
     await dropCollections();
     await createUsers();
     await createPosts();
+    await createComments();
+    mongoose.connection.close();
 })();
 
 // Helpers
@@ -31,7 +33,9 @@ const dropCollections = async () => {
 };
 
 const createUsers = async () => {
+    // Create n users
     for (let i = 0; i < usersCount; i++) {
+        // All users (global)
         users.push(
             new User(
                 {
@@ -53,25 +57,59 @@ const createUsers = async () => {
 };
 
 const createPosts = async () => {
-    for (let i = 0; i < postsCount; i++) {
-        posts.push(
-            new Post(
+    // For each user
+    for (let n = 0; n < users.length; n++) {
+        // Current user posts
+        const userPosts = [];
+        // Create n posts
+        for (let i = 0; i < postsCount; i++) {
+            const newPost = new Post(
                 {
                     content: faker.lorem.paragraph(),
                     timestamp: new Date(faker.date.between('2018-01-01', '2018-12-12')).getTime(),
                 },
-            ),
-        );
-        // Connect user to every single like
-        for (let j = 0; j < likesCount; j++) {
-            let randomIndex = Math.floor(Math.random() * users.length);
-            // ReRand
-            while (posts[i].likes.includes(users[randomIndex]._id)) {
-                randomIndex = Math.floor(Math.random() * users.length);
+            );
+            userPosts.push(newPost);
+            // Create n likes
+            for (let j = 0; j < likesCount; j++) {
+                let randomIndex;
+                do {
+                    // Random again if not unique
+                    randomIndex = Math.floor(Math.random() * users.length);
+                } while (userPosts[i].likes.includes(users[randomIndex]._id));
+                // Connect like to post
+                userPosts[i].likes.push(users[randomIndex]._id);
             }
-            posts[i].likes.push(users[randomIndex]._id);
+            // Connect user to post
+            userPosts[i].author = users[n]._id;
         }
+        // All posts (global)
+        posts.push(...userPosts);
     }
     await Promise.all(posts.map(post => post.save()));
     console.log(`Posts for each user created: ${postsCount}`);
+};
+
+const createComments = async () => {
+    // For each post
+    for (let i = 0; i < posts.length; i++) {
+        // Current post comments
+        const postComments = [];
+        // Create n posts
+        for (let j = 0; j < commentsCount; j++) {
+            const newComment = new Comment(
+                {
+                    content: faker.lorem.paragraph(),
+                    timestamp: new Date(faker.date.between('2018-01-01', '2018-12-12')).getTime(),
+                    post: posts[i]._id,
+                    user: users[Math.floor(Math.random() * users.length)]._id,
+                },
+            );
+            postComments.push(newComment);
+        }
+        // All comments (global)
+        comments.push(...postComments);
+    }
+    await Promise.all(comments.map(comment => comment.save()));
+    console.log(`Comments for each post created: ${commentsCount}`);
 };
