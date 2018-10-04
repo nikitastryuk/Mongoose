@@ -28,7 +28,7 @@ const usersCount = 10,
 // Helpers
 const dropCollections = async () => {
     const collections = await mongoose.connection.db.collections();
-    await Promise.all(collections.map(collection => collection.remove()));
+    await Promise.all(collections.map(collection => collection.deleteMany()));
     console.log('Collections were removed');
 };
 
@@ -74,7 +74,7 @@ const createPosts = async () => {
             for (let j = 0; j < likesCount; j++) {
                 let randomIndex;
                 do {
-                    // Random again if not unique
+                    // Random again if like is not unique
                     randomIndex = Math.floor(Math.random() * users.length);
                 } while (userPosts[i].likes.includes(users[randomIndex]._id));
                 // Connect like to post
@@ -93,22 +93,19 @@ const createPosts = async () => {
 const createComments = async () => {
     // For each post
     for (let i = 0; i < posts.length; i++) {
-        // Current post comments
-        const postComments = [];
-        // Create n posts
+        // Create n comments
         for (let j = 0; j < commentsCount; j++) {
             const newComment = new Comment(
                 {
                     content: faker.lorem.paragraph(),
                     timestamp: new Date(faker.date.between('2018-01-01', '2018-12-12')).getTime(),
                     post: posts[i]._id,
-                    user: users[Math.floor(Math.random() * users.length)]._id,
+                    author: users[Math.floor(Math.random() * users.length)]._id,
+                    isRead: faker.random.boolean(),
                 },
             );
-            postComments.push(newComment);
+            comments.push(newComment);
         }
-        // All comments (global)
-        comments.push(...postComments);
     }
     await Promise.all(comments.map(comment => comment.save()));
     console.log(`Comments for each post created: ${commentsCount}`);

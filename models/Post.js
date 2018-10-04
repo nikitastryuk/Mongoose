@@ -8,6 +8,11 @@ const PostSchema = Schema({
         type: String,
         required: true,
     },
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true,
+    },
     timestamp: {
         type: Number,
         required: true,
@@ -15,10 +20,6 @@ const PostSchema = Schema({
     likes: [{
         type: Schema.Types.ObjectId,
         ref: 'User',
-    }],
-    comments: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Comment',
     }],
 }, { collection: 'posts' });
 

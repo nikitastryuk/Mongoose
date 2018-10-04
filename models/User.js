@@ -14,10 +14,7 @@ const UserSchema = Schema({
         type: Number,
         required: true,
     },
-    posts: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Post',
-    }],
+    // GeoJSON
     location: {
         coordinates: {
             type: [Number],

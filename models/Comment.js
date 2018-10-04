@@ -8,19 +8,24 @@ const CommentSchema = Schema({
         type: String,
         trim: true,
         required: true,
-        unique: true,
     },
     timestamp: {
         type: Number,
         required: true,
     },
-    user: {
+    isRead: {
+        type: Boolean,
+        required: true,
+    },
+    author: {
         type: Schema.Types.ObjectId,
         ref: 'User',
+        required: true,
     },
     post: {
         type: Schema.Types.ObjectId,
         ref: 'Post',
+        required: true,
     },
 }, { collection: 'comments' });
 

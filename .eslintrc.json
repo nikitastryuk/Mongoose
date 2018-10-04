@@ -18,6 +18,7 @@
     "no-continue": "off",
     "no-nested-ternary": "off",
     "no-extra-boolean-cast": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
+    "import/no-extraneous-dependencies": "off"
   }
 }
