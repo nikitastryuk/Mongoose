@@ -1,7 +1,8 @@
 require('dotenv').config();
 const connectToMongoDb = require('./config/mongo'),
     findUsersWithinRadius = require('./challenges/challenge1'),
-    findUserWithNewestPost = require('./challenges/challenge2'),
+    findNewestPostAndAuthor = require('./challenges/challenge2'),
+    findUserTotal = require('./challenges/challenge3'),
     Post = require('./models/Post'),
     Comment = require('./models/Comment');
 
@@ -9,5 +10,6 @@ const connectToMongoDb = require('./config/mongo'),
 (async () => {
     await connectToMongoDb();
     // await findUsersWithinRadius([-30, -50], 10000);
-    await findUserWithNewestPost();
+    // await findNewestPostAndAuthor();
+    await findUserTotal('5bb5e5a52ee64a13f077b456');
 })();

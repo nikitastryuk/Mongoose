@@ -4,11 +4,11 @@ const User = require('../models/User');
 Find all users within a radius and get distance to them (km).
 Age within [10-20] range.
 Split name to firstName and lastName.
-Add posts related to user.
+Add posts related to all users.
 Sort posts by timestamp.
 Sort users by age.
-
 */
+
 const findUsersWithinRadius = async (coordinates, radius) => {
     const users = await User.aggregate([
         {

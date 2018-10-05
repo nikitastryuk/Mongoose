@@ -1,34 +1,65 @@
-const User = require('../models/User');
+const Post = require('../models/Post');
 
 /*
-Find user with the newest post and post itself.
-Total likes quantity.
-Add related to found post unread comments.
+Find the newest post and it's author.
+Add related to found post only read comments.
 Sort comments by timestamp.
 */
-const findUserWithNewestPost = async () => {
-    const user = await User.aggregate([
+const findNewestPostAndAuthor = async () => {
+    const post = await Post.aggregate([
+        { $sort: { timestamp: -1 } },
+        { $limit: 1 },
         {
             $lookup: {
-                from: 'posts',
+                from: 'comments',
                 localField: '_id',
-                foreignField: 'author',
-                as: 'posts',
+                foreignField: 'post',
+                as: 'comments',
             },
         },
         {
-            $unwind: '$posts',
+            $unwind: '$comments',
         },
         {
-            $sort: { 'posts.timestamp': -1 },
+            $match: { 'comments.isRead': { $eq: true } },
         },
-        // {
-        //     $project: {
-        //         post: { $arrayElemAt: ['$posts', 0] },
-        //     },
-        // },
+        {
+            $sort: { 'comments.timestamp': -1 },
+        },
+        {
+            $group: {
+                _id: '$_id',
+                content: { $first: '$content' },
+                timestamp: { $first: '$timestamp' },
+                author: { $first: '$author' },
+                comments: { $push: '$comments' },
+            },
+        },
+        {
+            $lookup: {
+                from: 'users',
+                localField: 'author',
+                foreignField: '_id',
+                as: 'author',
+            },
+        },
+        {
+            $addFields: {
+                author: { $arrayElemAt: ['$author', 0] },
+            },
+        },
+        {
+            $project: {
+                'author.__v': false,
+                'comments.__v': false,
+                'comments.author': false,
+                'comments.isRead': false,
+                'comments.post': false,
+            },
+        },
     ]);
-    console.log(user);
+    console.log(post[0]);
 };
 
-module.exports = findUserWithNewestPost;
+
+module.exports = findNewestPostAndAuthor;
