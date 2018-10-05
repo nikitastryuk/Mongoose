@@ -2,7 +2,7 @@ const Post = require('../models/Post');
 
 /*
 Find the newest post and it's author.
-Add related to found post only read comments.
+Add related to found post read comments.
 Sort comments by timestamp.
 */
 const findNewestPostAndAuthor = async () => {
